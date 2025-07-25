@@ -1,0 +1,1139 @@
+Help on RPNHead in module mmdet.models.dense_heads.rpn_head object:
+
+class RRPPNNHHeeaadd(mmdet.models.dense_heads.anchor_head.AnchorHead)
+ |  RPNHead(in_channels: int, num_classes: int = 1, init_cfg: Union[mmengine.config.config.ConfigDict, dict, List[Union[mmengine.config.config.ConfigDict, dict]]] = {'type': 'Normal', 'layer': 'Conv2d', 'std': 0.01}, num_convs: int = 1, **kwargs) -> None
+ |  
+ |  Implementation of RPN head.
+ |  
+ |  Args:
+ |      in_channels (int): Number of channels in the input feature map.
+ |      num_classes (int): Number of categories excluding the background
+ |          category. Defaults to 1.
+ |      init_cfg (:obj:`ConfigDict` or list[:obj:`ConfigDict`] or dict or             list[dict]): Initialization config dict.
+ |      num_convs (int): Number of convolution layers in the head.
+ |          Defaults to 1.
+ |  
+ |  Method resolution order:
+ |      RPNHead
+ |      mmdet.models.dense_heads.anchor_head.AnchorHead
+ |      mmdet.models.dense_heads.base_dense_head.BaseDenseHead
+ |      mmengine.model.base_module.BaseModule
+ |      torch.nn.modules.module.Module
+ |      builtins.object
+ |  
+ |  Methods defined here:
+ |  
+ |  ____iinniitt____(self, in_channels: int, num_classes: int = 1, init_cfg: Union[mmengine.config.config.ConfigDict, dict, List[Union[mmengine.config.config.ConfigDict, dict]]] = {'type': 'Normal', 'layer': 'Conv2d', 'std': 0.01}, num_convs: int = 1, **kwargs) -> None
+ |      Initialize BaseModule, inherited from `torch.nn.Module`
+ |  
+ |  ffoorrwwaarrdd__ssiinnggllee(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+ |      Forward feature of a single scale level.
+ |      
+ |      Args:
+ |          x (Tensor): Features of a single scale level.
+ |      
+ |      Returns:
+ |          tuple:
+ |              cls_score (Tensor): Cls scores for a single scale level                     the channels number is num_base_priors * num_classes.
+ |              bbox_pred (Tensor): Box energies / deltas for a single scale                     level, the channels number is num_base_priors * 4.
+ |  
+ |  lloossss__bbyy__ffeeaatt(self, cls_scores: List[torch.Tensor], bbox_preds: List[torch.Tensor], batch_gt_instances: List[mmengine.structures.instance_data.InstanceData], batch_img_metas: List[dict], batch_gt_instances_ignore: Optional[List[mmengine.structures.instance_data.InstanceData]] = None) -> dict
+ |      Calculate the loss based on the features extracted by the detection
+ |      head.
+ |      
+ |      Args:
+ |          cls_scores (list[Tensor]): Box scores for each scale level,
+ |              has shape (N, num_anchors * num_classes, H, W).
+ |          bbox_preds (list[Tensor]): Box energies / deltas for each scale
+ |              level with shape (N, num_anchors * 4, H, W).
+ |          batch_gt_instances (list[obj:InstanceData]): Batch of gt_instance.
+ |              It usually includes ``bboxes`` and ``labels`` attributes.
+ |          batch_img_metas (list[dict]): Meta information of each image, e.g.,
+ |              image size, scaling factor, etc.
+ |          batch_gt_instances_ignore (list[obj:InstanceData], Optional):
+ |              Batch of gt_instances_ignore. It includes ``bboxes`` attribute
+ |              data that is ignored during training and testing.
+ |      
+ |      Returns:
+ |          dict[str, Tensor]: A dictionary of loss components.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data and other attributes defined here:
+ |  
+ |  ____aabbssttrraaccttmmeetthhooddss____ = frozenset()
+ |  
+ |  ____aannnnoottaattiioonnss____ = {}
+ |  
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from mmdet.models.dense_heads.anchor_head.AnchorHead:
+ |  
+ |  ffoorrwwaarrdd(self, x: Tuple[torch.Tensor]) -> Tuple[List[torch.Tensor]]
+ |      Forward features from the upstream network.
+ |      
+ |      Args:
+ |          x (tuple[Tensor]): Features from the upstream network, each is
+ |              a 4D-tensor.
+ |      
+ |      Returns:
+ |          tuple: A tuple of classification scores and bbox prediction.
+ |      
+ |              - cls_scores (list[Tensor]): Classification scores for all                     scale levels, each is a 4D-tensor, the channels number                     is num_base_priors * num_classes.
+ |              - bbox_preds (list[Tensor]): Box energies / deltas for all                     scale levels, each is a 4D-tensor, the channels number                     is num_base_priors * 4.
+ |  
+ |  ggeett__aanncchhoorrss(self, featmap_sizes: List[tuple], batch_img_metas: List[dict], device: Union[torch.device, str] = 'cuda') -> Tuple[List[List[torch.Tensor]], List[List[torch.Tensor]]]
+ |      Get anchors according to feature map sizes.
+ |      
+ |      Args:
+ |          featmap_sizes (list[tuple]): Multi-level feature map sizes.
+ |          batch_img_metas (list[dict]): Image meta info.
+ |          device (torch.device | str): Device for returned tensors.
+ |              Defaults to cuda.
+ |      
+ |      Returns:
+ |          tuple:
+ |      
+ |              - anchor_list (list[list[Tensor]]): Anchors of each image.
+ |              - valid_flag_list (list[list[Tensor]]): Valid flags of each
+ |                image.
+ |  
+ |  ggeett__ttaarrggeettss(self, anchor_list: List[List[torch.Tensor]], valid_flag_list: List[List[torch.Tensor]], batch_gt_instances: List[mmengine.structures.instance_data.InstanceData], batch_img_metas: List[dict], batch_gt_instances_ignore: Optional[List[mmengine.structures.instance_data.InstanceData]] = None, unmap_outputs: bool = True, return_sampling_results: bool = False) -> tuple
+ |      Compute regression and classification targets for anchors in
+ |      multiple images.
+ |      
+ |      Args:
+ |          anchor_list (list[list[Tensor]]): Multi level anchors of each
+ |              image. The outer list indicates images, and the inner list
+ |              corresponds to feature levels of the image. Each element of
+ |              the inner list is a tensor of shape (num_anchors, 4).
+ |          valid_flag_list (list[list[Tensor]]): Multi level valid flags of
+ |              each image. The outer list indicates images, and the inner list
+ |              corresponds to feature levels of the image. Each element of
+ |              the inner list is a tensor of shape (num_anchors, )
+ |          batch_gt_instances (list[:obj:`InstanceData`]): Batch of
+ |              gt_instance. It usually includes ``bboxes`` and ``labels``
+ |              attributes.
+ |          batch_img_metas (list[dict]): Meta information of each image, e.g.,
+ |              image size, scaling factor, etc.
+ |          batch_gt_instances_ignore (list[:obj:`InstanceData`], optional):
+ |              Batch of gt_instances_ignore. It includes ``bboxes`` attribute
+ |              data that is ignored during training and testing.
+ |              Defaults to None.
+ |          unmap_outputs (bool): Whether to map outputs back to the original
+ |              set of anchors. Defaults to True.
+ |          return_sampling_results (bool): Whether to return the sampling
+ |              results. Defaults to False.
+ |      
+ |      Returns:
+ |          tuple: Usually returns a tuple containing learning targets.
+ |      
+ |              - labels_list (list[Tensor]): Labels of each level.
+ |              - label_weights_list (list[Tensor]): Label weights of each
+ |                level.
+ |              - bbox_targets_list (list[Tensor]): BBox targets of each level.
+ |              - bbox_weights_list (list[Tensor]): BBox weights of each level.
+ |              - avg_factor (int): Average factor that is used to average
+ |                the loss. When using sampling method, avg_factor is usually
+ |                the sum of positive and negative priors. When using
+ |                `PseudoSampler`, `avg_factor` is usually equal to the number
+ |                of positive priors.
+ |      
+ |          additional_returns: This function enables user-defined returns from
+ |              `self._get_targets_single`. These returns are currently refined
+ |              to properties at each feature map (i.e. having HxW dimension).
+ |              The results will be concatenated after the end
+ |  
+ |  lloossss__bbyy__ffeeaatt__ssiinnggllee(self, cls_score: torch.Tensor, bbox_pred: torch.Tensor, anchors: torch.Tensor, labels: torch.Tensor, label_weights: torch.Tensor, bbox_targets: torch.Tensor, bbox_weights: torch.Tensor, avg_factor: int) -> tuple
+ |      Calculate the loss of a single scale level based on the features
+ |      extracted by the detection head.
+ |      
+ |      Args:
+ |          cls_score (Tensor): Box scores for each scale level
+ |              Has shape (N, num_anchors * num_classes, H, W).
+ |          bbox_pred (Tensor): Box energies / deltas for each scale
+ |              level with shape (N, num_anchors * 4, H, W).
+ |          anchors (Tensor): Box reference for each scale level with shape
+ |              (N, num_total_anchors, 4).
+ |          labels (Tensor): Labels of each anchors with shape
+ |              (N, num_total_anchors).
+ |          label_weights (Tensor): Label weights of each anchor with shape
+ |              (N, num_total_anchors)
+ |          bbox_targets (Tensor): BBox regression targets of each anchor
+ |              weight shape (N, num_total_anchors, 4).
+ |          bbox_weights (Tensor): BBox regression loss weights of each anchor
+ |              with shape (N, num_total_anchors, 4).
+ |          avg_factor (int): Average factor that is used to average the loss.
+ |      
+ |      Returns:
+ |          tuple: loss components.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Readonly properties inherited from mmdet.models.dense_heads.anchor_head.AnchorHead:
+ |  
+ |  aanncchhoorr__ggeenneerraattoorr
+ |  
+ |  nnuumm__aanncchhoorrss
+ |  
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from mmdet.models.dense_heads.base_dense_head.BaseDenseHead:
+ |  
+ |  aauugg__tteesstt(self, aug_batch_feats, aug_batch_img_metas, rescale=False, with_ori_nms=False, **kwargs)
+ |      Test function with test time augmentation.
+ |      
+ |      Args:
+ |          aug_batch_feats (list[tuple[Tensor]]): The outer list
+ |              indicates test-time augmentations and inner tuple
+ |              indicate the multi-level feats from
+ |              FPN, each Tensor should have a shape (B, C, H, W),
+ |          aug_batch_img_metas (list[list[dict]]): Meta information
+ |              of images under the different test-time augs
+ |              (multiscale, flip, etc.). The outer list indicate
+ |              the
+ |          rescale (bool, optional): Whether to rescale the results.
+ |              Defaults to False.
+ |          with_ori_nms (bool): Whether execute the nms in original head.
+ |              Defaults to False. It will be `True` when the head is
+ |              adopted as `rpn_head`.
+ |      
+ |      Returns:
+ |          list(obj:`InstanceData`): Detection results of the
+ |          input images. Each item usually contains            following keys.
+ |      
+ |              - scores (Tensor): Classification scores, has a shape
+ |                (num_instance,)
+ |              - labels (Tensor): Labels of bboxes, has a shape
+ |                (num_instances,).
+ |              - bboxes (Tensor): Has a shape (num_instances, 4),
+ |                the last dimension 4 arrange as (x1, y1, x2, y2).
+ |  
+ |  ggeett__ppoossiittiivvee__iinnffooss(self) -> List[mmengine.structures.instance_data.InstanceData]
+ |      Get positive information from sampling results.
+ |      
+ |      Returns:
+ |          list[:obj:`InstanceData`]: Positive information of each image,
+ |          usually including positive bboxes, positive labels, positive
+ |          priors, etc.
+ |  
+ |  iinniitt__wweeiigghhttss(self) -> None
+ |      Initialize the weights.
+ |  
+ |  lloossss(self, x: Tuple[torch.Tensor], batch_data_samples: List[mmdet.structures.det_data_sample.DetDataSample]) -> dict
+ |      Perform forward propagation and loss calculation of the detection
+ |      head on the features of the upstream network.
+ |      
+ |      Args:
+ |          x (tuple[Tensor]): Features from the upstream network, each is
+ |              a 4D-tensor.
+ |          batch_data_samples (List[:obj:`DetDataSample`]): The Data
+ |              Samples. It usually includes information such as
+ |              `gt_instance`, `gt_panoptic_seg` and `gt_sem_seg`.
+ |      
+ |      Returns:
+ |          dict: A dictionary of loss components.
+ |  
+ |  lloossss__aanndd__pprreeddiicctt(self, x: Tuple[torch.Tensor], batch_data_samples: List[mmdet.structures.det_data_sample.DetDataSample], proposal_cfg: Optional[mmengine.config.config.ConfigDict] = None) -> Tuple[dict, List[mmengine.structures.instance_data.InstanceData]]
+ |      Perform forward propagation of the head, then calculate loss and
+ |      predictions from the features and data samples.
+ |      
+ |      Args:
+ |          x (tuple[Tensor]): Features from FPN.
+ |          batch_data_samples (list[:obj:`DetDataSample`]): Each item contains
+ |              the meta information of each image and corresponding
+ |              annotations.
+ |          proposal_cfg (ConfigDict, optional): Test / postprocessing
+ |              configuration, if None, test_cfg would be used.
+ |              Defaults to None.
+ |      
+ |      Returns:
+ |          tuple: the return value is a tuple contains:
+ |      
+ |              - losses: (dict[str, Tensor]): A dictionary of loss components.
+ |              - predictions (list[:obj:`InstanceData`]): Detection
+ |                results of each image after the post process.
+ |  
+ |  pprreeddiicctt(self, x: Tuple[torch.Tensor], batch_data_samples: List[mmdet.structures.det_data_sample.DetDataSample], rescale: bool = False) -> List[mmengine.structures.instance_data.InstanceData]
+ |      Perform forward propagation of the detection head and predict
+ |      detection results on the features of the upstream network.
+ |      
+ |      Args:
+ |          x (tuple[Tensor]): Multi-level features from the
+ |              upstream network, each is a 4D-tensor.
+ |          batch_data_samples (List[:obj:`DetDataSample`]): The Data
+ |              Samples. It usually includes information such as
+ |              `gt_instance`, `gt_panoptic_seg` and `gt_sem_seg`.
+ |          rescale (bool, optional): Whether to rescale the results.
+ |              Defaults to False.
+ |      
+ |      Returns:
+ |          list[obj:`InstanceData`]: Detection results of each image
+ |          after the post process.
+ |  
+ |  pprreeddiicctt__bbyy__ffeeaatt(self, cls_scores: List[torch.Tensor], bbox_preds: List[torch.Tensor], score_factors: Optional[List[torch.Tensor]] = None, batch_img_metas: Optional[List[dict]] = None, cfg: Optional[mmengine.config.config.ConfigDict] = None, rescale: bool = False, with_nms: bool = True) -> List[mmengine.structures.instance_data.InstanceData]
+ |      Transform a batch of output features extracted from the head into
+ |      bbox results.
+ |      
+ |      Note: When score_factors is not None, the cls_scores are
+ |      usually multiplied by it then obtain the real score used in NMS,
+ |      such as CenterNess in FCOS, IoU branch in ATSS.
+ |      
+ |      Args:
+ |          cls_scores (list[Tensor]): Classification scores for all
+ |              scale levels, each is a 4D-tensor, has shape
+ |              (batch_size, num_priors * num_classes, H, W).
+ |          bbox_preds (list[Tensor]): Box energies / deltas for all
+ |              scale levels, each is a 4D-tensor, has shape
+ |              (batch_size, num_priors * 4, H, W).
+ |          score_factors (list[Tensor], optional): Score factor for
+ |              all scale level, each is a 4D-tensor, has shape
+ |              (batch_size, num_priors * 1, H, W). Defaults to None.
+ |          batch_img_metas (list[dict], Optional): Batch image meta info.
+ |              Defaults to None.
+ |          cfg (ConfigDict, optional): Test / postprocessing
+ |              configuration, if None, test_cfg would be used.
+ |              Defaults to None.
+ |          rescale (bool): If True, return boxes in original image space.
+ |              Defaults to False.
+ |          with_nms (bool): If True, do nms before return boxes.
+ |              Defaults to True.
+ |      
+ |      Returns:
+ |          list[:obj:`InstanceData`]: Object detection results of each image
+ |          after the post process. Each item usually contains following keys.
+ |      
+ |              - scores (Tensor): Classification scores, has a shape
+ |                (num_instance, )
+ |              - labels (Tensor): Labels of bboxes, has a shape
+ |                (num_instances, ).
+ |              - bboxes (Tensor): Has a shape (num_instances, 4),
+ |                the last dimension 4 arrange as (x1, y1, x2, y2).
+ |  
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from mmengine.model.base_module.BaseModule:
+ |  
+ |  ____rreepprr____(self)
+ |      Return repr(self).
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from mmengine.model.base_module.BaseModule:
+ |  
+ |  iiss__iinniitt
+ |  
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from torch.nn.modules.module.Module:
+ |  
+ |  ____ccaallll____ = _call_impl(self, *input, **kwargs)
+ |  
+ |  ____ddeellaattttrr____(self, name)
+ |      Implement delattr(self, name).
+ |  
+ |  ____ddiirr____(self)
+ |      Default dir() implementation.
+ |  
+ |  ____ggeettaattttrr____(self, name: str) -> Union[torch.Tensor, ForwardRef('Module')]
+ |  
+ |  ____sseettaattttrr____(self, name: str, value: Union[torch.Tensor, ForwardRef('Module')]) -> None
+ |      Implement setattr(self, name, value).
+ |  
+ |  ____sseettssttaattee____(self, state)
+ |  
+ |  aadddd__mmoodduullee(self, name: str, module: Optional[ForwardRef('Module')]) -> None
+ |      Adds a child module to the current module.
+ |      
+ |      The module can be accessed as an attribute using the given name.
+ |      
+ |      Args:
+ |          name (string): name of the child module. The child module can be
+ |              accessed from this module using the given name
+ |          module (Module): child module to be added to the module.
+ |  
+ |  aappppllyy(self: ~T, fn: Callable[[ForwardRef('Module')], NoneType]) -> ~T
+ |      Applies ``fn`` recursively to every submodule (as returned by ``.children()``)
+ |      as well as self. Typical use includes initializing the parameters of a model
+ |      (see also :ref:`nn-init-doc`).
+ |      
+ |      Args:
+ |          fn (:class:`Module` -> None): function to be applied to each submodule
+ |      
+ |      Returns:
+ |          Module: self
+ |      
+ |      Example::
+ |      
+ |          >>> @torch.no_grad()
+ |          >>> def init_weights(m):
+ |          >>>     print(m)
+ |          >>>     if type(m) == nn.Linear:
+ |          >>>         m.weight.fill_(1.0)
+ |          >>>         print(m.weight)
+ |          >>> net = nn.Sequential(nn.Linear(2, 2), nn.Linear(2, 2))
+ |          >>> net.apply(init_weights)
+ |          Linear(in_features=2, out_features=2, bias=True)
+ |          Parameter containing:
+ |          tensor([[ 1.,  1.],
+ |                  [ 1.,  1.]])
+ |          Linear(in_features=2, out_features=2, bias=True)
+ |          Parameter containing:
+ |          tensor([[ 1.,  1.],
+ |                  [ 1.,  1.]])
+ |          Sequential(
+ |            (0): Linear(in_features=2, out_features=2, bias=True)
+ |            (1): Linear(in_features=2, out_features=2, bias=True)
+ |          )
+ |          Sequential(
+ |            (0): Linear(in_features=2, out_features=2, bias=True)
+ |            (1): Linear(in_features=2, out_features=2, bias=True)
+ |          )
+ |  
+ |  bbffllooaatt1166(self: ~T) -> ~T
+ |      Casts all floating point parameters and buffers to ``bfloat16`` datatype.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  bbuuffffeerrss(self, recurse: bool = True) -> Iterator[torch.Tensor]
+ |      Returns an iterator over module buffers.
+ |      
+ |      Args:
+ |          recurse (bool): if True, then yields buffers of this module
+ |              and all submodules. Otherwise, yields only buffers that
+ |              are direct members of this module.
+ |      
+ |      Yields:
+ |          torch.Tensor: module buffer
+ |      
+ |      Example::
+ |      
+ |          >>> for buf in model.buffers():
+ |          >>>     print(type(buf), buf.size())
+ |          <class 'torch.Tensor'> (20L,)
+ |          <class 'torch.Tensor'> (20L, 1L, 5L, 5L)
+ |  
+ |  cchhiillddrreenn(self) -> Iterator[ForwardRef('Module')]
+ |      Returns an iterator over immediate children modules.
+ |      
+ |      Yields:
+ |          Module: a child module
+ |  
+ |  ccppuu(self: ~T) -> ~T
+ |      Moves all model parameters and buffers to the CPU.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  ccuuddaa(self: ~T, device: Union[int, torch.device, NoneType] = None) -> ~T
+ |      Moves all model parameters and buffers to the GPU.
+ |      
+ |      This also makes associated parameters and buffers different objects. So
+ |      it should be called before constructing optimizer if the module will
+ |      live on GPU while being optimized.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Args:
+ |          device (int, optional): if specified, all parameters will be
+ |              copied to that device
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  ddoouubbllee(self: ~T) -> ~T
+ |      Casts all floating point parameters and buffers to ``double`` datatype.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  eevvaall(self: ~T) -> ~T
+ |      Sets the module in evaluation mode.
+ |      
+ |      This has any effect only on certain modules. See documentations of
+ |      particular modules for details of their behaviors in training/evaluation
+ |      mode, if they are affected, e.g. :class:`Dropout`, :class:`BatchNorm`,
+ |      etc.
+ |      
+ |      This is equivalent with :meth:`self.train(False) <torch.nn.Module.train>`.
+ |      
+ |      See :ref:`locally-disable-grad-doc` for a comparison between
+ |      `.eval()` and several similar mechanisms that may be confused with it.
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  eexxttrraa__rreepprr(self) -> str
+ |      Set the extra representation of the module
+ |      
+ |      To print customized extra information, you should re-implement
+ |      this method in your own modules. Both single-line and multi-line
+ |      strings are acceptable.
+ |  
+ |  ffllooaatt(self: ~T) -> ~T
+ |      Casts all floating point parameters and buffers to ``float`` datatype.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  ggeett__bbuuffffeerr(self, target: str) -> 'Tensor'
+ |      Returns the buffer given by ``target`` if it exists,
+ |      otherwise throws an error.
+ |      
+ |      See the docstring for ``get_submodule`` for a more detailed
+ |      explanation of this method's functionality as well as how to
+ |      correctly specify ``target``.
+ |      
+ |      Args:
+ |          target: The fully-qualified string name of the buffer
+ |              to look for. (See ``get_submodule`` for how to specify a
+ |              fully-qualified string.)
+ |      
+ |      Returns:
+ |          torch.Tensor: The buffer referenced by ``target``
+ |      
+ |      Raises:
+ |          AttributeError: If the target string references an invalid
+ |              path or resolves to something that is not a
+ |              buffer
+ |  
+ |  ggeett__eexxttrraa__ssttaattee(self) -> Any
+ |      Returns any extra state to include in the module's state_dict.
+ |      Implement this and a corresponding :func:`set_extra_state` for your module
+ |      if you need to store extra state. This function is called when building the
+ |      module's `state_dict()`.
+ |      
+ |      Note that extra state should be pickleable to ensure working serialization
+ |      of the state_dict. We only provide provide backwards compatibility guarantees
+ |      for serializing Tensors; other objects may break backwards compatibility if
+ |      their serialized pickled form changes.
+ |      
+ |      Returns:
+ |          object: Any extra state to store in the module's state_dict
+ |  
+ |  ggeett__ppaarraammeetteerr(self, target: str) -> 'Parameter'
+ |      Returns the parameter given by ``target`` if it exists,
+ |      otherwise throws an error.
+ |      
+ |      See the docstring for ``get_submodule`` for a more detailed
+ |      explanation of this method's functionality as well as how to
+ |      correctly specify ``target``.
+ |      
+ |      Args:
+ |          target: The fully-qualified string name of the Parameter
+ |              to look for. (See ``get_submodule`` for how to specify a
+ |              fully-qualified string.)
+ |      
+ |      Returns:
+ |          torch.nn.Parameter: The Parameter referenced by ``target``
+ |      
+ |      Raises:
+ |          AttributeError: If the target string references an invalid
+ |              path or resolves to something that is not an
+ |              ``nn.Parameter``
+ |  
+ |  ggeett__ssuubbmmoodduullee(self, target: str) -> 'Module'
+ |      Returns the submodule given by ``target`` if it exists,
+ |      otherwise throws an error.
+ |      
+ |      For example, let's say you have an ``nn.Module`` ``A`` that
+ |      looks like this:
+ |      
+ |      .. code-block:: text
+ |      
+ |          A(
+ |              (net_b): Module(
+ |                  (net_c): Module(
+ |                      (conv): Conv2d(16, 33, kernel_size=(3, 3), stride=(2, 2))
+ |                  )
+ |                  (linear): Linear(in_features=100, out_features=200, bias=True)
+ |              )
+ |          )
+ |      
+ |      (The diagram shows an ``nn.Module`` ``A``. ``A`` has a nested
+ |      submodule ``net_b``, which itself has two submodules ``net_c``
+ |      and ``linear``. ``net_c`` then has a submodule ``conv``.)
+ |      
+ |      To check whether or not we have the ``linear`` submodule, we
+ |      would call ``get_submodule("net_b.linear")``. To check whether
+ |      we have the ``conv`` submodule, we would call
+ |      ``get_submodule("net_b.net_c.conv")``.
+ |      
+ |      The runtime of ``get_submodule`` is bounded by the degree
+ |      of module nesting in ``target``. A query against
+ |      ``named_modules`` achieves the same result, but it is O(N) in
+ |      the number of transitive modules. So, for a simple check to see
+ |      if some submodule exists, ``get_submodule`` should always be
+ |      used.
+ |      
+ |      Args:
+ |          target: The fully-qualified string name of the submodule
+ |              to look for. (See above example for how to specify a
+ |              fully-qualified string.)
+ |      
+ |      Returns:
+ |          torch.nn.Module: The submodule referenced by ``target``
+ |      
+ |      Raises:
+ |          AttributeError: If the target string references an invalid
+ |              path or resolves to something that is not an
+ |              ``nn.Module``
+ |  
+ |  hhaallff(self: ~T) -> ~T
+ |      Casts all floating point parameters and buffers to ``half`` datatype.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  iippuu(self: ~T, device: Union[int, torch.device, NoneType] = None) -> ~T
+ |      Moves all model parameters and buffers to the IPU.
+ |      
+ |      This also makes associated parameters and buffers different objects. So
+ |      it should be called before constructing optimizer if the module will
+ |      live on IPU while being optimized.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Arguments:
+ |          device (int, optional): if specified, all parameters will be
+ |              copied to that device
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  llooaadd__ssttaattee__ddiicctt(self, state_dict: Mapping[str, Any], strict: bool = True)
+ |      Copies parameters and buffers from :attr:`state_dict` into
+ |      this module and its descendants. If :attr:`strict` is ``True``, then
+ |      the keys of :attr:`state_dict` must exactly match the keys returned
+ |      by this module's :meth:`~torch.nn.Module.state_dict` function.
+ |      
+ |      Args:
+ |          state_dict (dict): a dict containing parameters and
+ |              persistent buffers.
+ |          strict (bool, optional): whether to strictly enforce that the keys
+ |              in :attr:`state_dict` match the keys returned by this module's
+ |              :meth:`~torch.nn.Module.state_dict` function. Default: ``True``
+ |      
+ |      Returns:
+ |          ``NamedTuple`` with ``missing_keys`` and ``unexpected_keys`` fields:
+ |              * **missing_keys** is a list of str containing the missing keys
+ |              * **unexpected_keys** is a list of str containing the unexpected keys
+ |      
+ |      Note:
+ |          If a parameter or buffer is registered as ``None`` and its corresponding key
+ |          exists in :attr:`state_dict`, :meth:`load_state_dict` will raise a
+ |          ``RuntimeError``.
+ |  
+ |  mmoodduulleess(self) -> Iterator[ForwardRef('Module')]
+ |      Returns an iterator over all modules in the network.
+ |      
+ |      Yields:
+ |          Module: a module in the network
+ |      
+ |      Note:
+ |          Duplicate modules are returned only once. In the following
+ |          example, ``l`` will be returned only once.
+ |      
+ |      Example::
+ |      
+ |          >>> l = nn.Linear(2, 2)
+ |          >>> net = nn.Sequential(l, l)
+ |          >>> for idx, m in enumerate(net.modules()):
+ |                  print(idx, '->', m)
+ |      
+ |          0 -> Sequential(
+ |            (0): Linear(in_features=2, out_features=2, bias=True)
+ |            (1): Linear(in_features=2, out_features=2, bias=True)
+ |          )
+ |          1 -> Linear(in_features=2, out_features=2, bias=True)
+ |  
+ |  nnaammeedd__bbuuffffeerrss(self, prefix: str = '', recurse: bool = True) -> Iterator[Tuple[str, torch.Tensor]]
+ |      Returns an iterator over module buffers, yielding both the
+ |      name of the buffer as well as the buffer itself.
+ |      
+ |      Args:
+ |          prefix (str): prefix to prepend to all buffer names.
+ |          recurse (bool): if True, then yields buffers of this module
+ |              and all submodules. Otherwise, yields only buffers that
+ |              are direct members of this module.
+ |      
+ |      Yields:
+ |          (string, torch.Tensor): Tuple containing the name and buffer
+ |      
+ |      Example::
+ |      
+ |          >>> for name, buf in self.named_buffers():
+ |          >>>    if name in ['running_var']:
+ |          >>>        print(buf.size())
+ |  
+ |  nnaammeedd__cchhiillddrreenn(self) -> Iterator[Tuple[str, ForwardRef('Module')]]
+ |      Returns an iterator over immediate children modules, yielding both
+ |      the name of the module as well as the module itself.
+ |      
+ |      Yields:
+ |          (string, Module): Tuple containing a name and child module
+ |      
+ |      Example::
+ |      
+ |          >>> for name, module in model.named_children():
+ |          >>>     if name in ['conv4', 'conv5']:
+ |          >>>         print(module)
+ |  
+ |  nnaammeedd__mmoodduulleess(self, memo: Optional[Set[ForwardRef('Module')]] = None, prefix: str = '', remove_duplicate: bool = True)
+ |      Returns an iterator over all modules in the network, yielding
+ |      both the name of the module as well as the module itself.
+ |      
+ |      Args:
+ |          memo: a memo to store the set of modules already added to the result
+ |          prefix: a prefix that will be added to the name of the module
+ |          remove_duplicate: whether to remove the duplicated module instances in the result
+ |              or not
+ |      
+ |      Yields:
+ |          (string, Module): Tuple of name and module
+ |      
+ |      Note:
+ |          Duplicate modules are returned only once. In the following
+ |          example, ``l`` will be returned only once.
+ |      
+ |      Example::
+ |      
+ |          >>> l = nn.Linear(2, 2)
+ |          >>> net = nn.Sequential(l, l)
+ |          >>> for idx, m in enumerate(net.named_modules()):
+ |                  print(idx, '->', m)
+ |      
+ |          0 -> ('', Sequential(
+ |            (0): Linear(in_features=2, out_features=2, bias=True)
+ |            (1): Linear(in_features=2, out_features=2, bias=True)
+ |          ))
+ |          1 -> ('0', Linear(in_features=2, out_features=2, bias=True))
+ |  
+ |  nnaammeedd__ppaarraammeetteerrss(self, prefix: str = '', recurse: bool = True) -> Iterator[Tuple[str, torch.nn.parameter.Parameter]]
+ |      Returns an iterator over module parameters, yielding both the
+ |      name of the parameter as well as the parameter itself.
+ |      
+ |      Args:
+ |          prefix (str): prefix to prepend to all parameter names.
+ |          recurse (bool): if True, then yields parameters of this module
+ |              and all submodules. Otherwise, yields only parameters that
+ |              are direct members of this module.
+ |      
+ |      Yields:
+ |          (string, Parameter): Tuple containing the name and parameter
+ |      
+ |      Example::
+ |      
+ |          >>> for name, param in self.named_parameters():
+ |          >>>    if name in ['bias']:
+ |          >>>        print(param.size())
+ |  
+ |  ppaarraammeetteerrss(self, recurse: bool = True) -> Iterator[torch.nn.parameter.Parameter]
+ |      Returns an iterator over module parameters.
+ |      
+ |      This is typically passed to an optimizer.
+ |      
+ |      Args:
+ |          recurse (bool): if True, then yields parameters of this module
+ |              and all submodules. Otherwise, yields only parameters that
+ |              are direct members of this module.
+ |      
+ |      Yields:
+ |          Parameter: module parameter
+ |      
+ |      Example::
+ |      
+ |          >>> for param in model.parameters():
+ |          >>>     print(type(param), param.size())
+ |          <class 'torch.Tensor'> (20L,)
+ |          <class 'torch.Tensor'> (20L, 1L, 5L, 5L)
+ |  
+ |  rreeggiisstteerr__bbaacckkwwaarrdd__hhooookk(self, hook: Callable[[ForwardRef('Module'), Union[Tuple[torch.Tensor, ...], torch.Tensor], Union[Tuple[torch.Tensor, ...], torch.Tensor]], Optional[torch.Tensor]]) -> torch.utils.hooks.RemovableHandle
+ |      Registers a backward hook on the module.
+ |      
+ |      This function is deprecated in favor of :meth:`~torch.nn.Module.register_full_backward_hook` and
+ |      the behavior of this function will change in future versions.
+ |      
+ |      Returns:
+ |          :class:`torch.utils.hooks.RemovableHandle`:
+ |              a handle that can be used to remove the added hook by calling
+ |              ``handle.remove()``
+ |  
+ |  rreeggiisstteerr__bbuuffffeerr(self, name: str, tensor: Optional[torch.Tensor], persistent: bool = True) -> None
+ |      Adds a buffer to the module.
+ |      
+ |      This is typically used to register a buffer that should not to be
+ |      considered a model parameter. For example, BatchNorm's ``running_mean``
+ |      is not a parameter, but is part of the module's state. Buffers, by
+ |      default, are persistent and will be saved alongside parameters. This
+ |      behavior can be changed by setting :attr:`persistent` to ``False``. The
+ |      only difference between a persistent buffer and a non-persistent buffer
+ |      is that the latter will not be a part of this module's
+ |      :attr:`state_dict`.
+ |      
+ |      Buffers can be accessed as attributes using given names.
+ |      
+ |      Args:
+ |          name (string): name of the buffer. The buffer can be accessed
+ |              from this module using the given name
+ |          tensor (Tensor or None): buffer to be registered. If ``None``, then operations
+ |              that run on buffers, such as :attr:`cuda`, are ignored. If ``None``,
+ |              the buffer is **not** included in the module's :attr:`state_dict`.
+ |          persistent (bool): whether the buffer is part of this module's
+ |              :attr:`state_dict`.
+ |      
+ |      Example::
+ |      
+ |          >>> self.register_buffer('running_mean', torch.zeros(num_features))
+ |  
+ |  rreeggiisstteerr__ffoorrwwaarrdd__hhooookk(self, hook: Callable[..., NoneType]) -> torch.utils.hooks.RemovableHandle
+ |      Registers a forward hook on the module.
+ |      
+ |      The hook will be called every time after :func:`forward` has computed an output.
+ |      It should have the following signature::
+ |      
+ |          hook(module, input, output) -> None or modified output
+ |      
+ |      The input contains only the positional arguments given to the module.
+ |      Keyword arguments won't be passed to the hooks and only to the ``forward``.
+ |      The hook can modify the output. It can modify the input inplace but
+ |      it will not have effect on forward since this is called after
+ |      :func:`forward` is called.
+ |      
+ |      Returns:
+ |          :class:`torch.utils.hooks.RemovableHandle`:
+ |              a handle that can be used to remove the added hook by calling
+ |              ``handle.remove()``
+ |  
+ |  rreeggiisstteerr__ffoorrwwaarrdd__pprree__hhooookk(self, hook: Callable[..., NoneType]) -> torch.utils.hooks.RemovableHandle
+ |      Registers a forward pre-hook on the module.
+ |      
+ |      The hook will be called every time before :func:`forward` is invoked.
+ |      It should have the following signature::
+ |      
+ |          hook(module, input) -> None or modified input
+ |      
+ |      The input contains only the positional arguments given to the module.
+ |      Keyword arguments won't be passed to the hooks and only to the ``forward``.
+ |      The hook can modify the input. User can either return a tuple or a
+ |      single modified value in the hook. We will wrap the value into a tuple
+ |      if a single value is returned(unless that value is already a tuple).
+ |      
+ |      Returns:
+ |          :class:`torch.utils.hooks.RemovableHandle`:
+ |              a handle that can be used to remove the added hook by calling
+ |              ``handle.remove()``
+ |  
+ |  rreeggiisstteerr__ffuullll__bbaacckkwwaarrdd__hhooookk(self, hook: Callable[[ForwardRef('Module'), Union[Tuple[torch.Tensor, ...], torch.Tensor], Union[Tuple[torch.Tensor, ...], torch.Tensor]], Optional[torch.Tensor]]) -> torch.utils.hooks.RemovableHandle
+ |      Registers a backward hook on the module.
+ |      
+ |      The hook will be called every time the gradients with respect to module
+ |      inputs are computed. The hook should have the following signature::
+ |      
+ |          hook(module, grad_input, grad_output) -> tuple(Tensor) or None
+ |      
+ |      The :attr:`grad_input` and :attr:`grad_output` are tuples that contain the gradients
+ |      with respect to the inputs and outputs respectively. The hook should
+ |      not modify its arguments, but it can optionally return a new gradient with
+ |      respect to the input that will be used in place of :attr:`grad_input` in
+ |      subsequent computations. :attr:`grad_input` will only correspond to the inputs given
+ |      as positional arguments and all kwarg arguments are ignored. Entries
+ |      in :attr:`grad_input` and :attr:`grad_output` will be ``None`` for all non-Tensor
+ |      arguments.
+ |      
+ |      For technical reasons, when this hook is applied to a Module, its forward function will
+ |      receive a view of each Tensor passed to the Module. Similarly the caller will receive a view
+ |      of each Tensor returned by the Module's forward function.
+ |      
+ |      .. warning ::
+ |          Modifying inputs or outputs inplace is not allowed when using backward hooks and
+ |          will raise an error.
+ |      
+ |      Returns:
+ |          :class:`torch.utils.hooks.RemovableHandle`:
+ |              a handle that can be used to remove the added hook by calling
+ |              ``handle.remove()``
+ |  
+ |  rreeggiisstteerr__llooaadd__ssttaattee__ddiicctt__ppoosstt__hhooookk(self, hook)
+ |      Registers a post hook to be run after module's ``load_state_dict``
+ |      is called.
+ |      
+ |      It should have the following signature::
+ |          hook(module, incompatible_keys) -> None
+ |      
+ |      The ``module`` argument is the current module that this hook is registered
+ |      on, and the ``incompatible_keys`` argument is a ``NamedTuple`` consisting
+ |      of attributes ``missing_keys`` and ``unexpected_keys``. ``missing_keys``
+ |      is a ``list`` of ``str`` containing the missing keys and
+ |      ``unexpected_keys`` is a ``list`` of ``str`` containing the unexpected keys.
+ |      
+ |      The given incompatible_keys can be modified inplace if needed.
+ |      
+ |      Note that the checks performed when calling :func:`load_state_dict` with
+ |      ``strict=True`` are affected by modifications the hook makes to
+ |      ``missing_keys`` or ``unexpected_keys``, as expected. Additions to either
+ |      set of keys will result in an error being thrown when ``strict=True``, and
+ |      clearning out both missing and unexpected keys will avoid an error.
+ |      
+ |      Returns:
+ |          :class:`torch.utils.hooks.RemovableHandle`:
+ |              a handle that can be used to remove the added hook by calling
+ |              ``handle.remove()``
+ |  
+ |  rreeggiisstteerr__mmoodduullee(self, name: str, module: Optional[ForwardRef('Module')]) -> None
+ |      Alias for :func:`add_module`.
+ |  
+ |  rreeggiisstteerr__ppaarraammeetteerr(self, name: str, param: Optional[torch.nn.parameter.Parameter]) -> None
+ |      Adds a parameter to the module.
+ |      
+ |      The parameter can be accessed as an attribute using given name.
+ |      
+ |      Args:
+ |          name (string): name of the parameter. The parameter can be accessed
+ |              from this module using the given name
+ |          param (Parameter or None): parameter to be added to the module. If
+ |              ``None``, then operations that run on parameters, such as :attr:`cuda`,
+ |              are ignored. If ``None``, the parameter is **not** included in the
+ |              module's :attr:`state_dict`.
+ |  
+ |  rreeqquuiirreess__ggrraadd__(self: ~T, requires_grad: bool = True) -> ~T
+ |      Change if autograd should record operations on parameters in this
+ |      module.
+ |      
+ |      This method sets the parameters' :attr:`requires_grad` attributes
+ |      in-place.
+ |      
+ |      This method is helpful for freezing part of the module for finetuning
+ |      or training parts of a model individually (e.g., GAN training).
+ |      
+ |      See :ref:`locally-disable-grad-doc` for a comparison between
+ |      `.requires_grad_()` and several similar mechanisms that may be confused with it.
+ |      
+ |      Args:
+ |          requires_grad (bool): whether autograd should record operations on
+ |                                parameters in this module. Default: ``True``.
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  sseett__eexxttrraa__ssttaattee(self, state: Any)
+ |      This function is called from :func:`load_state_dict` to handle any extra state
+ |      found within the `state_dict`. Implement this function and a corresponding
+ |      :func:`get_extra_state` for your module if you need to store extra state within its
+ |      `state_dict`.
+ |      
+ |      Args:
+ |          state (dict): Extra state from the `state_dict`
+ |  
+ |  sshhaarree__mmeemmoorryy(self: ~T) -> ~T
+ |      See :meth:`torch.Tensor.share_memory_`
+ |  
+ |  ssttaattee__ddiicctt(self, *args, destination=None, prefix='', keep_vars=False)
+ |      Returns a dictionary containing a whole state of the module.
+ |      
+ |      Both parameters and persistent buffers (e.g. running averages) are
+ |      included. Keys are corresponding parameter and buffer names.
+ |      Parameters and buffers set to ``None`` are not included.
+ |      
+ |      .. warning::
+ |          Currently ``state_dict()`` also accepts positional arguments for
+ |          ``destination``, ``prefix`` and ``keep_vars`` in order. However,
+ |          this is being deprecated and keyword arguments will be enforced in
+ |          future releases.
+ |      
+ |      .. warning::
+ |          Please avoid the use of argument ``destination`` as it is not
+ |          designed for end-users.
+ |      
+ |      Args:
+ |          destination (dict, optional): If provided, the state of module will
+ |              be updated into the dict and the same object is returned.
+ |              Otherwise, an ``OrderedDict`` will be created and returned.
+ |              Default: ``None``.
+ |          prefix (str, optional): a prefix added to parameter and buffer
+ |              names to compose the keys in state_dict. Default: ``''``.
+ |          keep_vars (bool, optional): by default the :class:`~torch.Tensor` s
+ |              returned in the state dict are detached from autograd. If it's
+ |              set to ``True``, detaching will not be performed.
+ |              Default: ``False``.
+ |      
+ |      Returns:
+ |          dict:
+ |              a dictionary containing a whole state of the module
+ |      
+ |      Example::
+ |      
+ |          >>> module.state_dict().keys()
+ |          ['bias', 'weight']
+ |  
+ |  ttoo(self, *args, **kwargs)
+ |      Moves and/or casts the parameters and buffers.
+ |      
+ |      This can be called as
+ |      
+ |      .. function:: to(device=None, dtype=None, non_blocking=False)
+ |         :noindex:
+ |      
+ |      .. function:: to(dtype, non_blocking=False)
+ |         :noindex:
+ |      
+ |      .. function:: to(tensor, non_blocking=False)
+ |         :noindex:
+ |      
+ |      .. function:: to(memory_format=torch.channels_last)
+ |         :noindex:
+ |      
+ |      Its signature is similar to :meth:`torch.Tensor.to`, but only accepts
+ |      floating point or complex :attr:`dtype`\ s. In addition, this method will
+ |      only cast the floating point or complex parameters and buffers to :attr:`dtype`
+ |      (if given). The integral parameters and buffers will be moved
+ |      :attr:`device`, if that is given, but with dtypes unchanged. When
+ |      :attr:`non_blocking` is set, it tries to convert/move asynchronously
+ |      with respect to the host if possible, e.g., moving CPU Tensors with
+ |      pinned memory to CUDA devices.
+ |      
+ |      See below for examples.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Args:
+ |          device (:class:`torch.device`): the desired device of the parameters
+ |              and buffers in this module
+ |          dtype (:class:`torch.dtype`): the desired floating point or complex dtype of
+ |              the parameters and buffers in this module
+ |          tensor (torch.Tensor): Tensor whose dtype and device are the desired
+ |              dtype and device for all parameters and buffers in this module
+ |          memory_format (:class:`torch.memory_format`): the desired memory
+ |              format for 4D parameters and buffers in this module (keyword
+ |              only argument)
+ |      
+ |      Returns:
+ |          Module: self
+ |      
+ |      Examples::
+ |      
+ |          >>> linear = nn.Linear(2, 2)
+ |          >>> linear.weight
+ |          Parameter containing:
+ |          tensor([[ 0.1913, -0.3420],
+ |                  [-0.5113, -0.2325]])
+ |          >>> linear.to(torch.double)
+ |          Linear(in_features=2, out_features=2, bias=True)
+ |          >>> linear.weight
+ |          Parameter containing:
+ |          tensor([[ 0.1913, -0.3420],
+ |                  [-0.5113, -0.2325]], dtype=torch.float64)
+ |          >>> gpu1 = torch.device("cuda:1")
+ |          >>> linear.to(gpu1, dtype=torch.half, non_blocking=True)
+ |          Linear(in_features=2, out_features=2, bias=True)
+ |          >>> linear.weight
+ |          Parameter containing:
+ |          tensor([[ 0.1914, -0.3420],
+ |                  [-0.5112, -0.2324]], dtype=torch.float16, device='cuda:1')
+ |          >>> cpu = torch.device("cpu")
+ |          >>> linear.to(cpu)
+ |          Linear(in_features=2, out_features=2, bias=True)
+ |          >>> linear.weight
+ |          Parameter containing:
+ |          tensor([[ 0.1914, -0.3420],
+ |                  [-0.5112, -0.2324]], dtype=torch.float16)
+ |      
+ |          >>> linear = nn.Linear(2, 2, bias=None).to(torch.cdouble)
+ |          >>> linear.weight
+ |          Parameter containing:
+ |          tensor([[ 0.3741+0.j,  0.2382+0.j],
+ |                  [ 0.5593+0.j, -0.4443+0.j]], dtype=torch.complex128)
+ |          >>> linear(torch.ones(3, 2, dtype=torch.cdouble))
+ |          tensor([[0.6122+0.j, 0.1150+0.j],
+ |                  [0.6122+0.j, 0.1150+0.j],
+ |                  [0.6122+0.j, 0.1150+0.j]], dtype=torch.complex128)
+ |  
+ |  ttoo__eemmppttyy(self: ~T, *, device: Union[str, torch.device]) -> ~T
+ |      Moves the parameters and buffers to the specified device without copying storage.
+ |      
+ |      Args:
+ |          device (:class:`torch.device`): The desired device of the parameters
+ |              and buffers in this module.
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  ttrraaiinn(self: ~T, mode: bool = True) -> ~T
+ |      Sets the module in training mode.
+ |      
+ |      This has any effect only on certain modules. See documentations of
+ |      particular modules for details of their behaviors in training/evaluation
+ |      mode, if they are affected, e.g. :class:`Dropout`, :class:`BatchNorm`,
+ |      etc.
+ |      
+ |      Args:
+ |          mode (bool): whether to set training mode (``True``) or evaluation
+ |                       mode (``False``). Default: ``True``.
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  ttyyppee(self: ~T, dst_type: Union[torch.dtype, str]) -> ~T
+ |      Casts all parameters and buffers to :attr:`dst_type`.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Args:
+ |          dst_type (type or string): the desired type
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  xxppuu(self: ~T, device: Union[int, torch.device, NoneType] = None) -> ~T
+ |      Moves all model parameters and buffers to the XPU.
+ |      
+ |      This also makes associated parameters and buffers different objects. So
+ |      it should be called before constructing optimizer if the module will
+ |      live on XPU while being optimized.
+ |      
+ |      .. note::
+ |          This method modifies the module in-place.
+ |      
+ |      Arguments:
+ |          device (int, optional): if specified, all parameters will be
+ |              copied to that device
+ |      
+ |      Returns:
+ |          Module: self
+ |  
+ |  zzeerroo__ggrraadd(self, set_to_none: bool = False) -> None
+ |      Sets gradients of all model parameters to zero. See similar function
+ |      under :class:`torch.optim.Optimizer` for more context.
+ |      
+ |      Args:
+ |          set_to_none (bool): instead of setting to zero, set the grads to None.
+ |              See :meth:`torch.optim.Optimizer.zero_grad` for details.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from torch.nn.modules.module.Module:
+ |  
+ |  ____ddiicctt____
+ |      dictionary for instance variables (if defined)
+ |  
+ |  ____wweeaakkrreeff____
+ |      list of weak references to the object (if defined)
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data and other attributes inherited from torch.nn.modules.module.Module:
+ |  
+ |  TT__ddeessttiinnaattiioonn = ~T_destination
+ |  
+ |  dduummpp__ppaattcchheess = False

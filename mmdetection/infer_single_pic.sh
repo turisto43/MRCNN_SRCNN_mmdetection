@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=6 python ./demo/image_demo_try.py ./vocdata/VOC2007/JPEGImages/000005.jpg ./output_frcnn2x/faster-rcnn_r50_fpn_2x_coco.py --weights ./output_frcnn2x/epoch_24.pth --out-dir ./ouput_single_pic
